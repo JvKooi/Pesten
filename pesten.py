@@ -34,5 +34,3 @@ class kaart:
         return '\n'.join(result)
     else:
         return result
-
-print(kaart('J','J'))
