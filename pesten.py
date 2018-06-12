@@ -1,4 +1,4 @@
-suits={'schoppen':'♠','ruiten':'♦','harten':'♥','klaver':'♣','J':' '}
+﻿suits={'schoppen':'♠','ruiten':'♦','harten':'♥','klaver':'♣','J':' '}
 
 class kaart:
   def __init__(self,symbool,waarde):
@@ -103,3 +103,26 @@ class hand(list):
 #tegenstander_hand = hand([kaart('harten',1),kaart('verborgen',2),kaart('klaver',10)])
 #print(speler_hand)
 #print(tegenstander_hand)
+
+#code voor het deck en het uitdelen aan het begin van het spel
+symbolen=['schoppen','ruiten','harten','klaver']
+a=['A','2','3','4','5','6','7','8','9','10','B','V','H']
+deck=[]
+for i in range(len(symbolen)-1):
+  for j in range(len(a)-1):
+    deck.append(kaart(symbolen[i],a[j]))
+deck.append(kaart('J','J'))
+deck.append(kaart('J','J'))
+
+import random
+
+speler_hand=[]
+def delen(deck,speler_hand):
+  i=0
+  while i!=7:
+    a=random.choice(deck)
+    speler_hand.append(a)
+    deck.remove(a)
+    i=i+1
+  return speler_hand
+
