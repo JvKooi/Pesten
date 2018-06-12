@@ -116,7 +116,7 @@ deck.append(kaart('J','J'))
 
 import random
 
-speler_hand=[]
+speler_hand=hand([])
 def delen(deck,speler_hand):
   i=0
   while i!=7:
