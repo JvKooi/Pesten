@@ -211,3 +211,5 @@ class polynoom(list):
       for i in range(len(self.waarde)):
         result.append(self.waarde[i]*other)
     return polynoom(result)
+
+BIGMAN 
