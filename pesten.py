@@ -1,5 +1,6 @@
 ﻿#!/usr/bin/python3
 import sys
+import copy
 
 import random
 suits={'schoppen':'♠','ruiten':'♦','harten':'♥','klaver':'♣','J':' '}
@@ -102,7 +103,6 @@ class hand(list):
     result = [''.join(line) for line in lines]
     return '\n'.join([''.join(line) for line in lines])
 
-
 # code voor het aanmaken van een deck
 def deck_aanmaken():
   symbolen = ['schoppen','ruiten','harten','klaver']
@@ -117,10 +117,10 @@ def deck_aanmaken():
   return deck
 
 # code voor het uitdelen van de kaarten aan begin van het spel
-def delen(deck):
+def delen(deck,instelling_aantal_kaarten):
   speler_hand = hand([])
   i=0
-  while i!=7:
+  while i!=instelling_aantal_kaarten:
     a=random.choice(deck)
     speler_hand.append(a)
     deck.remove(a)
@@ -155,19 +155,13 @@ def kaart_twee(deck,hand_kaarten):
 # de joker kaart laat de persoon in kwestie (speler_hand) 5 kaarten pakken
 def kaart_joker(deck,speler_hand):
   if instelling_joker == 'ja':
-    kaart_pakken(deck,speler_hand)
-    kaart_pakken(deck,speler_hand)
-    kaart_pakken(deck,speler_hand)
-    kaart_pakken(deck,speler_hand)
-    kaart_pakken(deck,speler_hand)
+    for i in range(5):
+      kaart_pakken(deck,speler_hand)
   return speler_hand
 
 # elke kaart met waarde 10 laat de kaarten van de tegenstander voor 1 ronde zien
-def kaart_tien(tegenstander_hand):
-  if instelling_tien == 'ja':
-    ronde_spelen(speler_hand,tegenstander_hand,tegenstander_hand,pot)
-  else:
-    ronde_spelen(speler_hand,tegenstander_hand,computer_hand,pot)
+def kaart_tien(speler_hand,tegenstander_hand,deck,pot):
+  return
 
 # moet restricties geven aan de invoer van de instellingen (nog niet in werking)
 def instelling_input():
@@ -182,7 +176,10 @@ def instelling_input():
 # code om de speler's opties na te gaan. Hierbij werken sommige kaarten al wel(2,10,J)
 # en de rest doet het nog niet.
 def speler_input(speler_deck,tegenstander_hand,computer_hand,pot):
-  print(computer_hand)
+  if len(computer_hand) <= 8:
+    print(computer_hand)
+  else:
+    print(kaart('verborgen','J'), 'x', len(computer_hand))
   print(pot[-1])
   print(speler_hand)
   print('optie 1: kaart spelen \noptie 2: kaart pakken')
@@ -208,7 +205,8 @@ def speler_input(speler_deck,tegenstander_hand,computer_hand,pot):
     elif speler_deck[kaart_keuze-1].waarde == '10':
       pot.append(speler_deck.pop(kaart_keuze-1))
       if instelling_tien == 'ja':
-        ronde_spelen(speler_hand,tegenstander_hand,tegenstander_hand,pot)
+        kaart_tien(speler_hand,tegenstander_hand,deck,pot)
+
     elif speler_deck[kaart_keuze-1].waarde == 'J':
       pot.append(speler_deck.pop(kaart_keuze-1))
       if instelling_joker == 'ja':
@@ -220,17 +218,19 @@ def speler_input(speler_deck,tegenstander_hand,computer_hand,pot):
   return 
 
 # code om een spel te spelen en dit weer te geven
+instelling_aantal_kaarten = int(input('met hoeveel kaarten wil je beginnen? '))
 print('Selecteer ja/nee voor het gebruik van een pestkaart')
-instelling_twee = input('twee kopen ')
-instelling_zeven = input('zeven blijft kleven ')
-instelling_acht = input('acht wacht ')
-instelling_tien = input('tien laat je kaarten zien ')
-instelling_boer = input('symbool veranderen ')
-instelling_heer = input('heertje nog een keertje ')
-instelling_joker = input('5 kaarten kopen ')
+instelling_twee = input('Bij twee: twee pakken ')
+instelling_zeven = input('Bij zeven: nog een keer spelen ')
+instelling_acht = input('Bij acht: volgende speler overslaan ')
+instelling_tien = input('Bij tien: opnieuw delen ')
+instelling_boer = input('Bij boer: symbool kiezen ')
+instelling_heer = input('Bij heer: nog een keer spelen ')
+instelling_joker = input('Bij joker: vijf kaarten pakken ')
 deck = deck_aanmaken()
-speler_hand = delen(deck)
-tegenstander_hand = delen(deck)
+speler_hand = delen(deck,instelling_aantal_kaarten)
+speler_hand.append(kaart('harten','10'))
+tegenstander_hand = delen(deck,instelling_aantal_kaarten)
 computer_hand = hand([kaart('verborgen',1)]*len(tegenstander_hand))
 pot = hand([])
 pot.append(random.choice(deck))
