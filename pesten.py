@@ -268,7 +268,7 @@ def speler_input(speler_deck,tegenstander_hand,computer_hand,pot,volgorde,beurt)
             elif pot[-1].waarde == '7':
                 if instelling_zeven == 'ja':
                     speler_input(speler_deck,tegenstander_hand,computer_hand,pot,volgorde,beurt)
-            elif speler_deck[kaart_keuze-1].waarde == '8':
+            elif pot[-1].waarde == '8':
       
                 kaart_acht(volgorde,beurt)
                 speler_input(speler_deck,tegenstander_hand,computer_hand,pot,volgorde,beurt)
@@ -285,7 +285,7 @@ def speler_input(speler_deck,tegenstander_hand,computer_hand,pot,volgorde,beurt)
             elif pot[-1].waarde == 'B':
                 if instelling_boer == 'ja':
                     kaart_boer()
-            elif speler_deck[kaart_keuze-1].waarde == 'A':
+            elif pot[-1].waarde == 'A':
           
                 if instelling_aas == 'ja':
                     volgorde=kaart_aas(volgorde)
