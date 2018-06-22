@@ -1,7 +1,5 @@
 ﻿#!/usr/bin/python3
 import sys
-import copy
-
 import random
 suits={'schoppen':'♠','ruiten':'♦','harten':'♥','klaver':'♣','J':' '}
 
@@ -108,8 +106,8 @@ def deck_aanmaken():
     symbolen = ['schoppen','ruiten','harten','klaver']
     waarden = ['A','2','3','4','5','6','7','8','9','10','B','V','H']
     deck=[]
-    for i in range(len(symbolen)-1):
-        for j in range(len(waarden)-1):
+    for i in range(len(symbolen)):
+        for j in range(len(waarden)):
             deck.append(kaart(symbolen[i],waarden[j]))
     if instelling_joker == 'ja':
         deck.append(kaart('J','J'))
@@ -127,71 +125,148 @@ def delen(deck,instelling_aantal_kaarten):
         i=i+1
     return speler_hand
 
-# code om 1 ronde te spelen, hierbij hebben de speler en de tegenstander beide 1 zet.
-def ronde_spelen(speler_hand,tegenstander_hand,computer_hand,pot,volgorde,beurt):
-    if len(speler_hand) > 0 and len(tegenstander_hand)>0:
-        speler_input(speler_hand,tegenstander_hand,computer_hand,pot,volgorde,beurt)
-        computer_hand = hand([kaart('verborgen',1)]*len(tegenstander_hand))
-        ronde_spelen(speler_hand,tegenstander_hand,computer_hand,pot,volgorde,beurt)
-    else:
-        print('afgelopen')
+def spel_spelen(speler_hand,tegenstander_hand,pot,deck,speler_input,volgorde,beurt):
+  while len(speler_hand) != 0 or len(tegenstander_hand) != 0:
+    ronde_spelen(speler_hand,tegenstander_hand,pot,deck,speler_input,volgorde,beurt)
+  if len(speler_hand) == 0:
+    print('Gefeliciteerd, je hebt gewonnen!')
+  elif len(tegenstander_hand) == 0:
+    print('Helaas, je hebt verloren!')
 
-# kaart pakken uit het deck
-def kaart_pakken(deck,speler_hand):
-    speler_hand.append(deck.pop(random.choice(range(len(deck)))))
-    return speler_hand
+def ronde_spelen(speler_hand,tegenstander_hand,pot,deck,speler_input,volgorde,beurt):
+  print_tegenstander(tegenstander_hand)
+  print(pot)
+  print(speler_hand)
+  A=speler_input(speler_hand)
+  speler_kaart =  speler_hand[A[1]-1]
+  if A[0] == 'pakken':
+    kaart_pakken(speler_hand,deck)
+  elif A[0] == 'spelen':
+    if not controleer_kaart(pot,speler_kaart):
+      ronde_spelen(speler_hand,tegenstander_hand,pot,deck,speler_input,volgorde,beurt)
+    elif controleer_kaart(pot,speler_kaart):
+      gespeeld=[]
+      gespeeld.append(speler_kaart)
+      print(gespeeld)
+      speler_hand.remove(speler_hand[A[1]-1])
+      print(speler_hand)
+      gespeelde_kaart(speler_kaart,gespeeld,speler_hand,tegenstander_hand,volgorde,beurt,pot,deck)
+    beurt = beurt + 1
 
-#code voor kaart aas
-def kaart_aas(volgorde):
+def print_tegenstander(tegenstander_hand):
+  a=len(tegenstander_hand)
+  if a<=8:
+    computer_hand=hand([kaart('verborgen','verborgen')]*a)
+    print(computer_hand)
+  else:
+    computer_hand=(hand([kaart('verborgen','verborgen')]), 'x', str(a))
+    print(computer_hand)
+
+def speler_input(speler_hand):
+  print('Speel een kaart of pak een kaart:')
+  kaart_input = input('Ik wil een kaart ')
+  if kaart_input == 'pakken':
+    kaart_keuze = 0
+  if kaart_input == 'spelen':
+    print('Welke kaart wilt u spelen?')
+    kaart_keuze = int(input('Uw keuze is kaartnummer: '))
+  return ([kaart_input,kaart_keuze])
+
+def gespeelde_kaart(speler_kaart,gespeeld,speler_hand,tegenstander_hand,volgorde,beurt,pot,deck):
+  if speler_kaart.waarde == '2':
+    kaart_twee(pot,gespeeld,deck,speler_hand,gespeeld,tegenstander_hand)
+  elif speler_kaart.waarde == '7':
+    kaart_zeven(pot,gespeeld,deck,beurt)
+  elif speler_kaart.waarde == '8':
+    kaart_acht(pot,gespeeld,deck,beurt)
+  elif speler_kaart.waarde == '10':
+    kaart_tien(pot,gespeeld,deck,speler_hand,tegenstander_hand)
+  elif speler_kaart.waarde == 'B':
+    kaart_boer(pot,gespeeld,deck)
+  elif speler_kaart.waarde == 'H':
+    kaart_heer(pot,gespeeld,deck,beurt)
+  elif speler_kaart.waarde == 'A':
+    kaart_aas(pot,gespeeld,deck,volgorde)
+  elif speler_kaart.waarde == 'J':
+    kaart_joker(pot,gespeeld,deck,speler_hand,tegenstander_hand)
+  stapels_bijwerken
+
+def stapels_bijwerken(pot,gespeeld,deck):
+    deck.append(pot[0])
+    pot.clear()
+    pot.append(gespeeld[-1])
+    gespeeld.remove(gespeeld[-1])
+    deck = deck + gespeeld
+    gespeeld.clear()
+
+#####################################
+#code voor twee pakken nog niet helemaal af: misschien combineren met joker?
+def kan_ik_opleggen(x):
+  print('kun je een',str(x),'opleggen? ')
+  result = input()
+  return result == 'ja'
+
+def kaart_twee(pot,gespeeld,deck,speler_hand,tegenstander_hand):
+  if instelling_twee == 'ja':
+    return
+#####################################
+
+def kaart_zeven(pot,gespeeld,deck,beurt):
+  if instelling_zeven == 'ja':
+    beurt = beurt - 1
+
+def kaart_acht(pot,gespeeld,deck,beurt):
+  if instelling_acht == 'ja':
+    beurt = beurt + 1
+  
+def kaart_tien(pot,gespeeld,deck,speler_hand,tegenstander_hand):
+  if instelling_tien == 'ja':
+    a=len(speler_hand)
+    for i in range(len(tegenstander_hand)):
+      speler_hand.append(tegenstander_hand[i])
+    tegenstander_hand.clear()
+    for i in range(a):
+      tegenstander_hand.append(speler_hand[i])
+    for i in range(a):
+      speler_hand.remove(speler_hand[0])
+   
+def kaart_boer(pot,gespeeld,deck):
+  if instelling_boer == 'ja':
+    print('Welk symbool wilt u spelen?')
+    symbool_input = input('Uw keuze is: ')
+    gespeeld.append(kaart('symbool_input','B'))
+
+def kaart_heer(pot,gespeeld,deck,beurt):
+  if instelling_heer == 'ja':
+    beurt = beurt - 1
+
+def kaart_aas(pot,gespeeld,deck,volgorde):
+  if instelling_aas == 'ja':  
     nieuwevolgorde=[]
     while len(volgorde) !=0:
         nieuwevolgorde.append(volgorde.pop(-1))
-    return nieuwevolgorde
+    volgorde = nieuwevolgorde
+
+def kaart_joker(deck,speler_hand):
+  if instelling_joker == 'ja':
+    for i in range(5):
+      kaart_pakken(deck,speler_hand)
+
+# kaart pakken uit het deck
+def kaart_pakken(speler_hand,deck):
+  speler_hand.append(deck.pop(random.choice(range(len(deck)))))
 
 #code voor kaart acht
-def kaart_acht(volgorde,beurt):
-    if volgorde[-2]==beurt:
-        beurt=volgorde[0]
-    elif volgorde[-1]==beurt:
-        beurt=volgorde[1]
-    else:
-        for i in range(len(volgorde)):
-            if volgorde[i]==beurt:
-                beurt=volgorde[i+2]
-                return beurt
-        
-# elke kaart met waarde 10 laat de kaarten van de tegenstander voor 1 ronde zien
-def kaart_tien(speler_hand,tegenstander_hand):
-    a=len(speler_hand)
-    for i in range(len(tegenstander_hand)):
-        speler_hand.append(tegenstander_hand[i])
-    tegenstander_hand.clear()
-    for i in range(a):
-        tegenstander_hand.append(speler_hand[i])
-    for i in range(a):
-        speler_hand.remove(speler_hand[0])
-    return (speler_hand,tegenstander_hand)
-
-# code voor pest kaart 2
-def kaart_twee(deck,hand_kaarten):
-    if instelling_twee == 'ja':
-        kaart_pakken(deck,hand_kaarten)
-        kaart_pakken(deck,hand_kaarten)
-    return hand_kaarten
-
-# de joker kaart laat de persoon in kwestie (speler_hand) 5 kaarten pakken
-def kaart_joker(deck,speler_hand):
-    if instelling_joker == 'ja':
-        for i in range(5):
-            kaart_pakken(deck,speler_hand)
-    return speler_hand
-
-
-def kaart_boer():
-    if instelling_boer == 'ja':
-        print('Welk symbool wilt u spelen?')
-        symbool_input = input('Uw keuze is: ')
-        return symbool_input
+#def kaart_acht(volgorde,beurt):
+    #if volgorde[-2]==beurt:
+        #beurt=volgorde[0]
+    #elif volgorde[-1]==beurt:
+        #beurt=volgorde[1]
+    #else:
+        #for i in range(len(volgorde)):
+            #if volgorde[i]==beurt:
+                #beurt=volgorde[i+2]
+                #return beurt
     
 def speelvolgorde(instelling_aantal_spelers):
     B=[]
@@ -217,84 +292,16 @@ def instelling_input():
         print('kies uit: ja/nee')
         
 #moet controleren of de opgelegde kaart correct is
-def controleer_kaart(speler_deck,pot,kaart_keuze):
-    for i in range(len((speler_deck))):
-        if pot[-1].symbool =='J':
-            pot.append(speler_deck.pop(kaart_keuze-1))
-            return
-        if speler_deck[kaart_keuze-1].symbool == 'J':
-            pot.append(speler_deck.pop(kaart_keuze-1))
-            return
-        if pot[-1].waarde == 'B':
-            if kaart_boer() == speler_deck[kaart_keuze-1].symbool:
-                return
-            else:
-                print('Foute kaart, probeer opnieuw')
-                return
-        elif speler_deck[kaart_keuze-1].waarde == pot[-1].waarde or speler_deck[kaart_keuze-1].symbool == pot[-1].symbool:
-            pot.append(speler_deck.pop(kaart_keuze-1))
-            return
-        else:
-            print ('Foute kaart, probeer opnieuw')
-            return False 
-
-# code om de speler's opties na te gaan. Hierbij werken sommige kaarten al wel(2,10,J)
-# en de rest doet het nog niet.
-def speler_input(speler_deck,tegenstander_hand,computer_hand,pot,volgorde,beurt):
-    if len(computer_hand) <= 8:
-        print(computer_hand)
-    else:
-        print(kaart('verborgen','J'), 'x', len(computer_hand))
-    print(pot[-1])
-    print(speler_hand)
-    print('optie 1: kaart spelen \noptie 2: kaart pakken')
-    kaart_input = input('Uw keuze is optie: ')
-    if kaart_input == '2':
-        kaart_pakken(deck,speler_deck)
-    elif kaart_input == '1':
-        print('Welke kaart wilt u spelen?')
-        kaart_keuze = int(input('Uw keuze is kaartnummer: '))
-        
-        if controleer_kaart(speler_deck, pot,kaart_keuze) is False:
-            speler_input(speler_deck,tegenstander_hand,computer_hand,pot,volgorde, beurt)
-        else:
-        
-            if pot[-1].waarde == '2':
-               
-                if instelling_twee == 'ja':
-                    tegenstander_hand = kaart_twee(deck,tegenstander_hand)
-           
-               
-            elif pot[-1].waarde == '7':
-                if instelling_zeven == 'ja':
-                    speler_input(speler_deck,tegenstander_hand,computer_hand,pot,volgorde,beurt)
-            elif pot[-1].waarde == '8':
-      
-                kaart_acht(volgorde,beurt)
-                speler_input(speler_deck,tegenstander_hand,computer_hand,pot,volgorde,beurt)
-            elif pot[-1].waarde == '10':
-                
-                if instelling_tien == 'ja':
-                    kaart_tien(speler_hand,tegenstander_hand,deck,pot)
-
-            elif pot[-1].waarde == 'J':
-               
-                if instelling_joker == 'ja':
-                    kaart_joker(deck,tegenstander_hand)
-                    
-            elif pot[-1].waarde == 'B':
-                if instelling_boer == 'ja':
-                    kaart_boer()
-            elif pot[-1].waarde == 'A':
-          
-                if instelling_aas == 'ja':
-                    volgorde=kaart_aas(volgorde)
-            elif int(kaart_input) > len(speler_deck):
-                return
-            
-               
-        return 
-
+def controleer_kaart(pot,speler_kaart):
+  if pot[-1].symbool =='J':
+    return
+  elif speler_kaart.symbool == 'J':
+    return
+  elif speler_kaart.waarde == pot[0].waarde or speler_kaart.symbool == pot[0].symbool:
+    return
+  else:
+    print ('Foute kaart, probeer opnieuw')
+    return False 
 
 # code om een spel te spelen en dit weer te geven
 def instellingen():
@@ -335,15 +342,13 @@ instelling_joker = instel[8]
 instelling_aas = instel[9]
 
 volgorde=speelvolgorde(instelling_aantal_spelers)
-beurt='speler'
+beurt=0
 deck = deck_aanmaken()
 speler_hand = delen(deck,instelling_aantal_kaarten)
-speler_hand.append(kaart('schoppen','B'))
 tegenstander_hand = delen(deck,instelling_aantal_kaarten)
-computer_hand = hand([kaart('verborgen',1)]*len(tegenstander_hand))
 pot = hand([])
 pot.append(random.choice(deck))
 
-ronde_spelen(speler_hand,tegenstander_hand,computer_hand,pot,volgorde,beurt)
+spel_spelen(speler_hand,tegenstander_hand,pot,deck,speler_input,volgorde,beurt)
 
 
