@@ -50,17 +50,17 @@ def kaart_twee(gespeeld,deck,handen,volgorde,beurt):
       gespeeld.append(handen[volgorde[(beurt+1)%len(volgorde)]].pop(i))
       for i in range(4):
         spelspelen.kaart_pakken(handen[volgorde[(beurt+2)%len(volgorde)]],deck)
-    return ([gespeeld,deck,handen])
+  return ([gespeeld,deck,handen])
     
 def kaart_zeven(beurt):
   if instelling_zeven == 'ja':
     beurt = beurt - 1
-    return beurt
+  return beurt
 
 def kaart_acht(beurt):
   if instelling_acht == 'ja':
     beurt = beurt + 1
-    return beurt
+  return beurt
   
 def kaart_tien(handen,volgorde,beurt):
   if instelling_tien == 'ja':
@@ -74,7 +74,7 @@ def kaart_tien(handen,volgorde,beurt):
       handen[volgorde[beurt]].remove(handen[volgorde[beurt]][0])
     print(volgorde[beurt],'heeft handen gewisseld met',volgorde[(beurt+1)%len(volgorde)],'!')
     time.sleep(3)
-    return handen
+  return handen
    
 def kaart_boer(gespeeld,volgorde,beurt,handen):
   if instelling_boer == 'ja':
@@ -97,12 +97,12 @@ def kaart_boer(gespeeld,volgorde,beurt,handen):
         print(volgorde[beurt], 'heeft de pot veranderd in', symbolen[i],'!')
         time.sleep(3)
         gespeeld.append(klassen.kaart(symbolen[i],'B'))
-    return gespeeld
+  return gespeeld
 
 def kaart_heer(beurt):
   if instelling_heer == 'ja':
     beurt = beurt - 1
-    return beurt
+  return beurt
 
 def kaart_aas(beurt,volgorde):
   if instelling_aas == 'ja':  
@@ -117,9 +117,11 @@ def kaart_aas(beurt,volgorde):
     print(nieuwevolgorde[beurt],'heeft de volgorde omgedraaid!')
     time.sleep(3)
     return ([beurt,nieuwevolgorde])
+  else:
+    return ([beurt,volgorde])
 
 def kaart_joker(handen,deck,volgorde,beurt):
   if instelling_joker == 'ja':
     for i in range(5):
       spelspelen.kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
-    return ([handen,deck])
+  return ([handen,deck])
