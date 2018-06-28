@@ -417,7 +417,7 @@ def kaart_boer(gespeeld,volgorde,beurt):
     if volgorde[beurt] == 'speler':       
         print('Welk symbool wilt u spelen?')
         symbool_input = input('Uw keuze is: ')
-        gespeeld.append(kaart('symbool_input','B'))
+        gespeeld.append(kaart(str(symbool_input),'B'))
     else:
         aantal_symbolen = kaart_teller(handen[volgorde[beurt]])
         aantal_symbolen.remove(aantal_symbolen[-1])
@@ -446,7 +446,6 @@ def kaart_aas(beurt,volgorde):
       i = i - 1
     for i in range(1,len(volgorde)-beurt):
       nieuwevolgorde.append(volgorde[-i])
-    print(nieuwevolgorde)
     beurt = 0
     print(nieuwevolgorde[beurt],'heeft de volgorde omgedraaid!')
     time.sleep(3)
@@ -539,7 +538,7 @@ gespeeld = []
 deck = deck_aanmaken()
 handen=handen_aanmaken(volgorde,deck,instelling_aantal_kaarten)
 pot = hand([])
-pot.append(random.choice(deck))
+kaart_pakken(pot,deck)
 spel_spelen(beurt,deck,gespeeld,pot,handen,volgorde)
 
 
