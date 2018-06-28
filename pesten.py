@@ -1,7 +1,8 @@
 ﻿#!/usr/bin/python3
 import sys
 import random
-suits={'schoppen':'♠','ruiten':'♦','harten':'♥','klaver':'♣','J':' '}
+import time
+suits={'schoppen':'♠','ruiten':'\033[1;31m♦\033[1;m','harten':'\033[1;31m♥\033[1;m','klaveren':'♣','J':' '}
 
 class kaart:
     def __init__(self,symbool,waarde):
@@ -103,7 +104,7 @@ class hand(list):
 
 # code voor het aanmaken van een deck
 def deck_aanmaken():
-    symbolen = ['schoppen','ruiten','harten','klaver']
+    symbolen = ['schoppen','ruiten','harten','klaveren']
     waarden = ['A','2','3','4','5','6','7','8','9','10','B','V','H']
     deck=[]
     for i in range(len(symbolen)):
@@ -125,41 +126,130 @@ def delen(deck,instelling_aantal_kaarten):
         i=i+1
     return speler_hand
 
-def spel_spelen(beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde):
-  while len(speler_hand) != 0 and len(tegenstander_hand) != 0:
-    resultaat = ronde_spelen(beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde)
+def handen_leeg(handen,volgorde):
+  A = []
+  for i in volgorde:
+    if len(handen[i]) == 0:
+      A.append(0)
+    else:
+      A.append(1)
+  if 0 in A:
+    return True
+  else:
+    return False
+
+def spel_spelen(beurt,deck,gespeeld,pot,handen,volgorde):
+  while handen_leeg(handen,volgorde) == False:
+    resultaat = ronde_spelen(beurt,deck,gespeeld,pot,handen,volgorde)
     beurt = resultaat[0]
     deck = resultaat[1]
     gespeeld = resultaat[2]
     pot = resultaat[3]
-    speler_hand = resultaat[4]
-    tegenstander_hand =resultaat[5]
-    volgorde = resultaat[6]
-  if len(speler_hand) == 0:
+    handen = resultaat[4]
+    volgorde = resultaat[5]
+  if len(handen['speler']) == 0:
     print('Gefeliciteerd, je hebt gewonnen!')
-  elif len(tegenstander_hand) == 0:
-    print('Helaas, je hebt verloren!')
+  else:
+    for i in volgorde:
+      if len(handen[i]) == 0:
+        print(i, 'heeft gewonnen!')
 
-def ronde_spelen(beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde):
-  print_tegenstander(tegenstander_hand)
+def tegenstanders_printen(handen,volgorde):
+  for i in volgorde:
+    if i != 'speler':
+      print('De hand van', i,':')
+      print_tegenstander(handen[i])
+
+def ronde_spelen(beurt,deck,gespeeld,pot,handen,volgorde):
+  tegenstanders_printen(handen,volgorde)
   print(pot)
-  print_speler(speler_hand)
-  A=speler_input(speler_hand)
-  speler_kaart =  speler_hand[A[1]-1]
+  print_speler(handen['speler'])
+  if volgorde[beurt] != 'speler':
+    print(volgorde[beurt], 'is aan de beurt!')
+    A = CPU_input(handen[volgorde[beurt]])
+    time.sleep(3)
+    if A[0] == 'pakken':
+      print(volgorde[beurt], 'heeft een kaart gepakt!')
+    else:
+      print(volgorde[beurt], 'heeft een kaart gespeeld!')
+    time.sleep(3)
+  else:
+    print('Jij bent aan de beurt!')
+    A = speler_input(handen[volgorde[beurt]])
+  speler_kaart =  handen[volgorde[beurt]][A[1]-1]
   if A[0] == 'pakken':
-    kaart_pakken(speler_hand,deck)
+    kaart_pakken(handen[volgorde[beurt]],deck)
+    beurt = (beurt + 1) % len(volgorde)
   elif A[0] == 'spelen':
     if not controleer_kaart(pot,speler_kaart):
-      ronde_spelen(beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde)
+      ronde_spelen(beurt,deck,gespeeld,pot,handen,volgorde)
+      beurt = beurt + 1
     elif controleer_kaart(pot,speler_kaart):
-      gespeeld.append(speler_hand.pop(A[1]-1))
-      resultaat = gespeelde_kaart(beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde,speler_kaart)
-      volgorde = resultaat[6]
+      gespeeld.append(handen[volgorde[beurt]].pop(A[1]-1))
+      resultaat = gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart)
+      volgorde = resultaat[5]
       beurt = (resultaat[0] + 1) % len(volgorde)
-  return ([beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde])
+      deck = resultaat[1]
+      gespeeld = resultaat[2]
+      pot = resultaat[3]
+      handen = resultaat[4]
+  return ([beurt,deck,gespeeld,pot,handen,volgorde])
+
+def CPU_input(speler_hand):
+  if pot[-1].symbool == 'J':
+    potentieel = speler_hand
+  else:
+    potentieel = hand()
+    for i in range(len(speler_hand)):
+      if speler_hand[i].symbool == 'J':
+        potentieel.append(speler_hand[i])
+      elif speler_hand[i].symbool == pot[-1].symbool:
+        potentieel.append(speler_hand[i])
+      elif speler_hand[i].waarde == pot[-1].waarde:
+        potentieel.append(speler_hand[i])
+  if len(potentieel) == 0:
+    return ['pakken',0]
+  else:
+    L = [hand() for i in range(14)]
+    for i in range(len(potentieel)):
+      if potentieel[i].waarde == 'J':
+        L[0].append(potentieel[i])
+      elif potentieel[i].waarde == '7':
+        L[1].append(potentieel[i])
+      elif potentieel[i].waarde == 'H':
+        L[2].append(potentieel[i])
+      elif potentieel[i].waarde == '2':
+        L[3].append(potentieel[i])
+      elif potentieel[i].waarde == '8':
+        L[4].append(potentieel[i])
+      elif potentieel[i].waarde == '10':
+        L[5].append(potentieel[i])
+      elif potentieel[i].waarde == 'B':
+        L[6].append(potentieel[i])
+      elif potentieel[i].waarde == 'A':
+        L[7].append(potentieel[i])
+      elif potentieel[i].waarde == 'V':
+        L[8].append(potentieel[i])
+      elif potentieel[i].waarde == '9':
+        L[9].append(potentieel[i])
+      elif potentieel[i].waarde == '6':
+        L[10].append(potentieel[i])
+      elif potentieel[i].waarde == '5':
+        L[11].append(potentieel[i])
+      elif potentieel[i].waarde == '4':
+        L[12].append(potentieel[i])
+      elif potentieel[i].waarde == '3':
+        L[13].append(potentieel[i])
+    i = 0
+    while len(L[i]) == 0:
+      i = i + 1
+    keuze = random.choice(L[i])
+    for i in range(len(speler_hand)):
+      if speler_hand[i] == keuze:
+        return ['spelen',int(i+1)]
 
 def print_tegenstander(tegenstander_hand):
-  if len(tegenstander_hand) <= 10:
+  if len(tegenstander_hand) <= 8:
     computer_hand=hand([kaart('verborgen','verborgen')]*len(tegenstander_hand))
     print(computer_hand)
   else:
@@ -222,21 +312,18 @@ def speler_input(speler_hand):
     kaart_keuze = int(input('Uw keuze is kaartnummer: '))
   return ([kaart_input,kaart_keuze])
 
-def gespeelde_kaart(beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde,speler_kaart):
+def gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart):
   if speler_kaart.waarde == '2':
-    resultaat = kaart_twee(gespeeld,deck,speler_hand,tegenstander_hand)
+    resultaat = kaart_twee(gespeeld,deck,handen,volgorde,beurt)
     gespeeld = resultaat[0]
     deck = resultaat[1]
-    speler_hand = resultaat[2]
-    tegenstander_hand = resultaat[3]
+    handen = resultaat[2]
   elif speler_kaart.waarde == '7':
     beurt = kaart_zeven(beurt)
   elif speler_kaart.waarde == '8':
     beurt = kaart_acht(beurt)
   elif speler_kaart.waarde == '10':
-    resultaat = kaart_tien(speler_hand,tegenstander_hand)
-    speler_hand = resultaat[0]
-    tegenstander_hand = resultaat [1]
+    handen = kaart_tien(handen,volgorde,beurt)
   elif speler_kaart.waarde == 'B':
     gespeeld = kaart_boer(gespeeld)
   elif speler_kaart.waarde == 'H':
@@ -246,9 +333,11 @@ def gespeelde_kaart(beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgor
     beurt = resultaat[0]
     volgorde = resultaat [1]
   elif speler_kaart.waarde == 'J':
-    kaart_joker(tegenstander_hand,deck)
+    resultaat = kaart_joker(handen,deck,volgorde,beurt)
+    handen = resultaat[0]
+    deck = resultaat[1]
   stapels_bijwerken(deck,pot,gespeeld)
-  return ([beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde])
+  return ([beurt,deck,gespeeld,pot,handen,volgorde])
 
 def stapels_bijwerken(deck,pot,gespeeld):
   deck.append(pot[0])
@@ -271,7 +360,7 @@ def kaart_teller(speler_hand):
       elif speler_hand[i].symbool == 'harten':
         L[2].append(speler_hand[i])
         i=i-1
-      elif speler_hand[i].symbool == 'klaver':
+      elif speler_hand[i].symbool == 'klaveren':
         L[3].append(speler_hand[i])
         i=i-1
       elif speler_hand[i].waarde == 'J':
@@ -279,24 +368,25 @@ def kaart_teller(speler_hand):
         i=i-1
       elif speler_hand[i].waarde == '2':
         L[5].append(speler_hand[i])
-  return ([len(L[0]),len(L[1]), len(L[2]), len(L[3]), len(L[4]), len(L[3])])
+  return ([len(L[0]),len(L[1]), len(L[2]), len(L[3]), len(L[4]), len(L[5])])
 
-def kaart_twee(gespeeld,deck,speler_hand,tegenstander_hand):
-  A = kaart_teller(tegenstander_hand)
+def kaart_twee(gespeeld,deck,handen,volgorde,beurt):
+  B = []
+  for i in volgorde:
+    B.append(kaart_teller(handen[i])[-1])
   if instelling_twee == 'ja':
-    if A[5] == 0:
-      kaart_pakken(tegenstander_hand,deck)
-      kaart_pakken(tegenstander_hand,deck)
-    elif A[5] > 0:
-      print(tegenstander_hand)
-      i = len(tegenstander_hand)-1
-      while i >= 0:
-        if tegenstander_hand[i].waarde != '2':
+    if B[(beurt+1)%len(volgorde)] == 0:
+      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+    elif B[(beurt+1)%len(volgorde)] > 0:
+      i = len(handen[volgorde[(beurt+1)%len(volgorde)]])-1
+      while i > 0:
+        if handen[volgorde[(beurt+1)%len(volgorde)]][i].waarde != '2':
           i=i-1
-      gespeeld.append(tegenstander_hand.pop(i))
+      gespeeld.append(handen[volgorde[(beurt+1)%len(volgorde)]].pop(i))
       for i in range(4):
-        kaart_pakken(speler_hand,deck)
-    return ([gespeeld,deck,speler_hand,tegenstander_hand])
+        kaart_pakken(handen[volgorde[(beurt+2)%len(volgorde)]],deck)
+    return ([gespeeld,deck,handen])
     
 def kaart_zeven(beurt):
   if instelling_zeven == 'ja':
@@ -308,23 +398,36 @@ def kaart_acht(beurt):
     beurt = beurt + 1
     return beurt
   
-def kaart_tien(speler_hand,tegenstander_hand):
+def kaart_tien(handen,volgorde,beurt):
   if instelling_tien == 'ja':
-    a=len(speler_hand)
-    for i in range(len(tegenstander_hand)):
-      speler_hand.append(tegenstander_hand[i])
-    tegenstander_hand.clear()
+    a=len(handen[volgorde[beurt]])
+    for i in range(len(handen[volgorde[(beurt+1)%len(volgorde)]])):
+      handen[volgorde[beurt]].append(handen[volgorde[(beurt+1)%len(volgorde)]][i])
+    handen[volgorde[(beurt+1)%len(volgorde)]].clear()
     for i in range(a):
-      tegenstander_hand.append(speler_hand[i])
+      handen[volgorde[(beurt+1)%len(volgorde)]].append(handen[volgorde[beurt]][i])
     for i in range(a):
-      speler_hand.remove(speler_hand[0])
-    return ([speler_hand,tegenstander_hand])
+      handen[volgorde[beurt]].remove(handen[volgorde[beurt]][0])
+    return handen
    
 def kaart_boer(gespeeld):
   if instelling_boer == 'ja':
-    print('Welk symbool wilt u spelen?')
-    symbool_input = input('Uw keuze is: ')
-    gespeeld.append(kaart(str(symbool_input),'B'))
+    if volgorde[beurt] == 'speler':       
+        print('Welk symbool wilt u spelen?')
+        symbool_input = input('Uw keuze is: ')
+        gespeeld.append(kaart('symbool_input','B'))
+    else:
+        aantal_symbolen = kaart_teller(handen[volgorde[beurt]])
+        aantal_symbolen.remove(aantal_symbolen[-1])
+        aantal_symbolen.remove(aantal_symbolen[-1])
+        max_symbool = max(aantal_symbolen)
+        i = 0
+        while aantal_symbolen[i] != max_symbool:
+            i = i + 1
+        symbolen = ['schoppen','ruiten','harten','klaveren']
+        print(volgorde[beurt], 'heeft de pot veranderd in', symbolen[i])
+        time.sleep(3)
+        gespeeld.append(kaart(symbolen[i],'B'))
     return gespeeld
 
 def kaart_heer(beurt):
@@ -335,33 +438,26 @@ def kaart_heer(beurt):
 def kaart_aas(beurt,volgorde):
   if instelling_aas == 'ja':  
     nieuwevolgorde=[]
-    while len(volgorde) !=0:
-        nieuwevolgorde.append(volgorde.pop(beurt-1))
-    beurt = beurt - 1
+    i = beurt
+    while i >= 0:
+      nieuwevolgorde.append(volgorde[i])
+      i = i - 1
+    for i in range(1,len(volgorde)-beurt):
+      nieuwevolgorde.append(volgorde[-i])
+    print(nieuwevolgorde)
+    beurt = 0
     return ([beurt,nieuwevolgorde])
 
-def kaart_joker(tegenstander_hand,deck):
+def kaart_joker(handen,deck,volgorde,beurt):
   if instelling_joker == 'ja':
     for i in range(5):
-      kaart_pakken(tegenstander_hand,deck)
-    return ([gespeeld,deck,speler_hand,tegenstander_hand])
+      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+    return ([handen,deck])
 
 # kaart pakken uit het deck
 def kaart_pakken(speler_hand,deck):
   speler_hand.append(deck.pop(random.choice(range(len(deck)))))
 
-#code voor kaart acht
-#def kaart_acht(volgorde,beurt):
-    #if volgorde[-2]==beurt:
-        #beurt=volgorde[0]
-    #elif volgorde[-1]==beurt:
-        #beurt=volgorde[1]
-    #else:
-        #for i in range(len(volgorde)):
-            #if volgorde[i]==beurt:
-                #beurt=volgorde[i+2]
-                #return beurt
-    
 def speelvolgorde(instelling_aantal_spelers):
     B=[]
     A=[]
@@ -375,15 +471,11 @@ def speelvolgorde(instelling_aantal_spelers):
         A.remove(b)
     return B
 
-# moet restricties geven aan de invoer van de instellingen (nog niet in werking)
-def instelling_input():
-    instelling = input()
-    if instelling == 'ja':
-        return
-    elif instelling == 'nee':
-        return
-    else:
-        print('kies uit: ja/nee')
+def handen_aanmaken(volgorde,deck,instelling_aantal_kaarten):
+  handen = {}
+  for i in volgorde:
+    handen.update({str(i):delen(deck,instelling_aantal_kaarten)})
+  return handen
         
 #moet controleren of de opgelegde kaart correct is
 def controleer_kaart(pot,speler_kaart):
@@ -394,7 +486,9 @@ def controleer_kaart(pot,speler_kaart):
   elif speler_kaart.waarde == pot[0].waarde or speler_kaart.symbool == pot[0].symbool:
     return True
   else:
-    print ('Foute kaart, probeer opnieuw')
+    print('\033[1;46m!!!!!!\033[1;m')
+    print ('\033[1;36mFoute kaart, probeer opnieuw!\033[1;m')
+    print('\033[1;46m!!!!!!\033[1;m')
     return False 
 
 # code om een spel te spelen en dit weer te geven
@@ -439,12 +533,10 @@ volgorde=speelvolgorde(instelling_aantal_spelers)
 beurt=0
 gespeeld = []
 deck = deck_aanmaken()
-speler_hand = delen(deck,instelling_aantal_kaarten)
-tegenstander_hand = delen(deck,instelling_aantal_kaarten)
+handen=handen_aanmaken(volgorde,deck,instelling_aantal_kaarten)
 pot = hand([])
 pot.append(random.choice(deck))
-
-spel_spelen(beurt,deck,gespeeld,pot,speler_hand,tegenstander_hand,volgorde)
+spel_spelen(beurt,deck,gespeeld,pot,handen,volgorde)
 
 
 
