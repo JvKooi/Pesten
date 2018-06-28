@@ -325,7 +325,7 @@ def gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart):
   elif speler_kaart.waarde == '10':
     handen = kaart_tien(handen,volgorde,beurt)
   elif speler_kaart.waarde == 'B':
-    gespeeld = kaart_boer(gespeeld)
+    gespeeld = kaart_boer(gespeeld,volgorde,beurt)
   elif speler_kaart.waarde == 'H':
     beurt = kaart_heer(beurt)
   elif speler_kaart.waarde == 'A':
@@ -408,9 +408,11 @@ def kaart_tien(handen,volgorde,beurt):
       handen[volgorde[(beurt+1)%len(volgorde)]].append(handen[volgorde[beurt]][i])
     for i in range(a):
       handen[volgorde[beurt]].remove(handen[volgorde[beurt]][0])
+    print(volgorde[beurt],'heeft handen gewisseld met',volgorde[(beurt+1)%len(volgorde)],'!')
+    time.sleep(3)
     return handen
    
-def kaart_boer(gespeeld):
+def kaart_boer(gespeeld,volgorde,beurt):
   if instelling_boer == 'ja':
     if volgorde[beurt] == 'speler':       
         print('Welk symbool wilt u spelen?')
@@ -425,7 +427,7 @@ def kaart_boer(gespeeld):
         while aantal_symbolen[i] != max_symbool:
             i = i + 1
         symbolen = ['schoppen','ruiten','harten','klaveren']
-        print(volgorde[beurt], 'heeft de pot veranderd in', symbolen[i])
+        print(volgorde[beurt], 'heeft de pot veranderd in', symbolen[i],'!')
         time.sleep(3)
         gespeeld.append(kaart(symbolen[i],'B'))
     return gespeeld
@@ -446,6 +448,8 @@ def kaart_aas(beurt,volgorde):
       nieuwevolgorde.append(volgorde[-i])
     print(nieuwevolgorde)
     beurt = 0
+    print(nieuwevolgorde[beurt],'heeft de volgorde omgedraaid!')
+    time.sleep(3)
     return ([beurt,nieuwevolgorde])
 
 def kaart_joker(handen,deck,volgorde,beurt):
