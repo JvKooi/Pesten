@@ -110,44 +110,44 @@ def print_speler(speler_hand):
   if len(speler_hand)<=8:
     print(speler_hand)
   else:
-    A = [hand(),hand(),hand(),hand(),hand()]
+    intervallen = [hand(),hand(),hand(),hand(),hand()]
     if len(speler_hand) > 8 and len(speler_hand) <= 16:
       for i in range(8):
-        A[0].append(speler_hand[i])
+        intervallen[0].append(speler_hand[i])
       for i in range(8,len(speler_hand)):
-        A[1].append(speler_hand[i])
+        intervallen[1].append(speler_hand[i])
     elif len(speler_hand) > 16 and len(speler_hand) <= 24:
       for i in range(8):
-        A[0].append(speler_hand[i])
+        intervallen[0].append(speler_hand[i])
       for i in range(8,16):
-        A[1].append(speler_hand[i])
+        intervallen[1].append(speler_hand[i])
       for i in range(16,len(speler_hand)):
-        A[2].append(speler_hand[i])
+        intervallen[2].append(speler_hand[i])
     elif len(speler_hand) > 24 and len(speler_hand) <= 32:
       for i in range(8):
-        A[0].append(speler_hand[i])
+        intervallen[0].append(speler_hand[i])
       for i in range(8,16):
-        A[1].append(speler_hand[i])
+        intervallen[1].append(speler_hand[i])
       for i in range(16,24):
-        A[2].append(speler_hand[i])
+        intervallen[2].append(speler_hand[i])
       for i in range(24,len(speler_hand)):
-        A[3].append(speler_hand[i])
+        intervallen[3].append(speler_hand[i])
     elif len(speler_hand) > 32 and len(speler_hand) <= 40:
       for i in range(8):
-        A[0].append(speler_hand[i])
+        intervallen[0].append(speler_hand[i])
       for i in range(8,16):
-        A[1].append(speler_hand[i])
+        intervallen[1].append(speler_hand[i])
       for i in range(16,24):
-        A[2].append(speler_hand[i])
+        intervallen[2].append(speler_hand[i])
       for i in range(24,32):
-        A[3].append(speler_hand[i])
+        intervallen[3].append(speler_hand[i])
       for i in range(32,len(speler_hand)):
-        A[4].append(speler_hand[i])
-    print(A[0])
-    print(A[1])
-    if len(A[2])>0:
-      print(A[2])  
-    if len(A[3])>0:
-      print(A[3]) 
-    if len(A[4])>0:
-      print(A[4])
+        intervallen[4].append(speler_hand[i])
+    print(intervallen[0])
+    print(intervallen[1])
+    if len(intervallen[2])>0:
+      print(intervallen[2])  
+    if len(intervallen[3])>0:
+      print(intervallen[3]) 
+    if len(intervallen[4])>0:
+      print(intervallen[4])
