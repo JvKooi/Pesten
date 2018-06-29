@@ -45,7 +45,7 @@ def handen_aanmaken(volgorde,deck,instelling_aantal_kaarten):
 
 def instellingen():
     instelling_aantal_spelers = int(input('Met hoeveel spelers wil je spelen? '))
-    instelling_aantal_kaarten = int(input('met hoeveel kaarten wil je beginnen? '))
+    instelling_aantal_kaarten = int(input('Met hoeveel kaarten wil je beginnen? '))
     instelling_speelinstelling = input('Wil je met standaardinstellingen spelen? ')
     if instelling_speelinstelling == 'ja':
         instelling_twee = 'ja'
