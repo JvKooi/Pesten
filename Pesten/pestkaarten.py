@@ -30,27 +30,45 @@ def kaart_teller(speler_hand):
       elif speler_hand[i].waarde == 'J':
         L[4].append(speler_hand[i])
         i=i-1
-      elif speler_hand[i].waarde == '2':
+      if speler_hand[i].waarde == '2':
         L[5].append(speler_hand[i])
   return ([len(L[0]),len(L[1]), len(L[2]), len(L[3]), len(L[4]), len(L[5])])
 
 def kaart_twee(gespeeld,deck,handen,volgorde,beurt):
-  B = []
-  for i in volgorde:
-    B.append(kaart_teller(handen[i])[-1])
   if instelling_twee == 'ja':
-    if B[(beurt+1)%len(volgorde)] == 0:
-      spelspelen.kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
-      spelspelen.kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
-    elif B[(beurt+1)%len(volgorde)] > 0:
-      i = len(handen[volgorde[(beurt+1)%len(volgorde)]])-1
-      while i > 0:
-        if handen[volgorde[(beurt+1)%len(volgorde)]][i].waarde != '2':
-          i=i-1
-      gespeeld.append(handen[volgorde[(beurt+1)%len(volgorde)]].pop(i))
-      for i in range(4):
-        spelspelen.kaart_pakken(handen[volgorde[(beurt+2)%len(volgorde)]],deck)
-  return ([gespeeld,deck,handen])
+    A = kaart_teller(handen[volgorde[(beurt+1)%len(volgorde)]])
+    print(volgorde[beurt], 'heeft een twee gespeeld!')
+    time.sleep(3)
+    if A[-1] == 0:
+      print(volgorde[beurt+1], 'moet twee kaarten pakken')
+      time.sleep(3)
+      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+      beurt = beurt + 1
+    else:
+      j = 1
+      i = A[-1]
+      B = []
+      while i != 0:
+        B.append(i)
+        i = kaart_teller(handen[volgorde[(beurt+j)%len(volgorde)]])[-1]
+        if i != 0:
+          print(volgorde[(beurt+j)%len(volgorde)], 'heeft ook een twee!')
+          time.sleep(3)
+          n = len(handen[volgorde[(beurt+j)%len(volgorde)]])-1
+          while handen[volgorde[(beurt+j)%len(volgorde)]][n].waarde != '2':
+            n = n-1
+          gespeeld.append(handen[volgorde[(beurt+j)%len(volgorde)]].pop(n))
+        j = j+1
+      a = len(B)*2            
+      print(volgorde[beurt+j-1], 'moet',a,'kaarten pakken')
+      time.sleep(3)
+      k = 0
+      while k != a:
+        kaart_pakken(handen[volgorde[(beurt+j-1)%len(volgorde)]],deck)
+        k = k+1 
+      beurt = beurt + j - 1
+  return ([gespeeld,deck,handen,beurt])  
     
 def kaart_zeven(beurt):
   if instelling_zeven == 'ja':

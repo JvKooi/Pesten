@@ -147,6 +147,9 @@ def spel_spelen(beurt,deck,gespeeld,pot,handen,volgorde):
     pot = resultaat[3]
     handen = resultaat[4]
     volgorde = resultaat[5]
+  tegenstanders_printen(handen,volgorde)
+  print(pot)
+  print_speler(handen['speler'])
   if len(handen['speler']) == 0:
     print('Gefeliciteerd, je hebt gewonnen!')
   else:
@@ -318,6 +321,7 @@ def gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart):
     gespeeld = resultaat[0]
     deck = resultaat[1]
     handen = resultaat[2]
+    beurt = resultaat[3]
   elif speler_kaart.waarde == '7':
     beurt = kaart_zeven(beurt)
   elif speler_kaart.waarde == '8':
@@ -366,11 +370,46 @@ def kaart_teller(speler_hand):
       elif speler_hand[i].waarde == 'J':
         L[4].append(speler_hand[i])
         i=i-1
-      elif speler_hand[i].waarde == '2':
+      if speler_hand[i].waarde == '2':
         L[5].append(speler_hand[i])
   return ([len(L[0]),len(L[1]), len(L[2]), len(L[3]), len(L[4]), len(L[5])])
 
 def kaart_twee(gespeeld,deck,handen,volgorde,beurt):
+  if instelling_twee == 'ja':
+    A = kaart_teller(handen[volgorde[(beurt+1)%len(volgorde)]])
+    print(volgorde[beurt], 'heeft een twee gespeeld!')
+    time.sleep(3)
+    if A[-1] == 0:
+      print(volgorde[beurt+1], 'moet twee kaarten pakken')
+      time.sleep(3)
+      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+      beurt = beurt + 1
+    else:
+      j = 1
+      i = A[-1]
+      B = []
+      while i != 0:
+        B.append(i)
+        i = kaart_teller(handen[volgorde[(beurt+j)%len(volgorde)]])[-1]
+        if i != 0:
+          print(volgorde[(beurt+j)%len(volgorde)], 'heeft ook een twee!')
+          time.sleep(3)
+          n = len(handen[volgorde[(beurt+j)%len(volgorde)]])-1
+          while handen[volgorde[(beurt+j)%len(volgorde)]][n].waarde != '2':
+            n = n-1
+          gespeeld.append(handen[volgorde[(beurt+j)%len(volgorde)]].pop(n))
+        j = j+1
+      a = len(B)*2            
+      print(volgorde[beurt+j-1], 'moet',a,'kaarten pakken')
+      time.sleep(3)
+      k = 0
+      while k != a:
+        kaart_pakken(handen[volgorde[(beurt+j-1)%len(volgorde)]],deck)
+        k = k+1 
+      beurt = beurt + j - 1
+  return ([gespeeld,deck,handen,beurt])  
+  
   B = []
   for i in volgorde:
     B.append(kaart_teller(handen[i])[-1])

@@ -26,6 +26,9 @@ def spel_spelen(beurt,deck,gespeeld,pot,handen,volgorde):
     pot = resultaat[3]
     handen = resultaat[4]
     volgorde = resultaat[5]
+  tegenstanders_printen(handen,volgorde)
+  print(pot)
+  print_speler(handen['speler'])
   if len(handen['speler']) == 0:
     print('Gefeliciteerd, je hebt gewonnen!')
   else:
@@ -93,26 +96,27 @@ def speler_input(speler_hand):
 
 def gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart):
   if speler_kaart.waarde == '2':
-    resultaat = pestkaarten.kaart_twee(gespeeld,deck,handen,volgorde,beurt)
+    resultaat = kaart_twee(gespeeld,deck,handen,volgorde,beurt)
     gespeeld = resultaat[0]
     deck = resultaat[1]
     handen = resultaat[2]
+    beurt = resultaat[3]
   elif speler_kaart.waarde == '7':
-    beurt = pestkaarten.kaart_zeven(beurt)
+    beurt = kaart_zeven(beurt)
   elif speler_kaart.waarde == '8':
-    beurt = pestkaarten.kaart_acht(beurt)
+    beurt = kaart_acht(beurt)
   elif speler_kaart.waarde == '10':
-    handen = pestkaarten.kaart_tien(handen,volgorde,beurt)
+    handen = kaart_tien(handen,volgorde,beurt)
   elif speler_kaart.waarde == 'B':
-    gespeeld = pestkaarten.kaart_boer(gespeeld,volgorde,beurt,handen)
+    gespeeld = kaart_boer(gespeeld,volgorde,beurt)
   elif speler_kaart.waarde == 'H':
-    beurt = pestkaarten.kaart_heer(beurt)
+    beurt = kaart_heer(beurt)
   elif speler_kaart.waarde == 'A':
-    resultaat = pestkaarten.kaart_aas(beurt,volgorde)
+    resultaat = kaart_aas(beurt,volgorde)
     beurt = resultaat[0]
     volgorde = resultaat [1]
   elif speler_kaart.waarde == 'J':
-    resultaat = pestkaarten.kaart_joker(handen,deck,volgorde,beurt)
+    resultaat = kaart_joker(handen,deck,volgorde,beurt)
     handen = resultaat[0]
     deck = resultaat[1]
   stapels_bijwerken(deck,pot,gespeeld)
