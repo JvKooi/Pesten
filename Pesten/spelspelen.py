@@ -96,27 +96,27 @@ def speler_input(speler_hand):
 
 def gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart):
   if speler_kaart.waarde == '2':
-    resultaat = kaart_twee(gespeeld,deck,handen,volgorde,beurt)
+    resultaat = pestkaarten.kaart_twee(gespeeld,deck,handen,volgorde,beurt)
     gespeeld = resultaat[0]
     deck = resultaat[1]
     handen = resultaat[2]
     beurt = resultaat[3]
   elif speler_kaart.waarde == '7':
-    beurt = kaart_zeven(beurt)
+    beurt = pestkaarten.kaart_zeven(beurt)
   elif speler_kaart.waarde == '8':
-    beurt = kaart_acht(beurt)
+    beurt = pestkaarten.kaart_acht(beurt)
   elif speler_kaart.waarde == '10':
-    handen = kaart_tien(handen,volgorde,beurt)
+    handen = pestkaarten.kaart_tien(handen,volgorde,beurt)
   elif speler_kaart.waarde == 'B':
-    gespeeld = kaart_boer(gespeeld,volgorde,beurt)
+    gespeeld = pestkaarten.kaart_boer(gespeeld,volgorde,beurt)
   elif speler_kaart.waarde == 'H':
-    beurt = kaart_heer(beurt)
+    beurt = pestkaarten.kaart_heer(beurt)
   elif speler_kaart.waarde == 'A':
-    resultaat = kaart_aas(beurt,volgorde)
+    resultaat = pestkaarten.kaart_aas(beurt,volgorde)
     beurt = resultaat[0]
     volgorde = resultaat [1]
   elif speler_kaart.waarde == 'J':
-    resultaat = kaart_joker(handen,deck,volgorde,beurt)
+    resultaat = pestkaarten.kaart_joker(handen,deck,volgorde,beurt)
     handen = resultaat[0]
     deck = resultaat[1]
   stapels_bijwerken(deck,pot,gespeeld)

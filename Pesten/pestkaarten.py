@@ -42,8 +42,8 @@ def kaart_twee(gespeeld,deck,handen,volgorde,beurt):
     if A[-1] == 0:
       print(volgorde[beurt+1], 'moet twee kaarten pakken')
       time.sleep(3)
-      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
-      kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+      spelspelen.kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
+      spelspelen.kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
       beurt = beurt + 1
     else:
       j = 1
@@ -65,7 +65,7 @@ def kaart_twee(gespeeld,deck,handen,volgorde,beurt):
       time.sleep(3)
       k = 0
       while k != a:
-        kaart_pakken(handen[volgorde[(beurt+j-1)%len(volgorde)]],deck)
+        spelspelen.kaart_pakken(handen[volgorde[(beurt+j-1)%len(volgorde)]],deck)
         k = k+1 
       beurt = beurt + j - 1
   return ([gespeeld,deck,handen,beurt])  
