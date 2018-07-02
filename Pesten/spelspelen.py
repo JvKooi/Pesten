@@ -28,7 +28,7 @@ def spel_spelen(beurt,deck,gespeeld,pot,handen,volgorde):
     volgorde = resultaat[5]
   tegenstanders_printen(handen,volgorde)
   print(pot)
-  print_speler(handen['speler'])
+  klassen.print_speler(handen['speler'])
   if len(handen['speler']) == 0:
     print('Gefeliciteerd, je hebt gewonnen!')
   else:
@@ -48,11 +48,11 @@ def ronde_spelen(beurt,deck,gespeeld,pot,handen,volgorde):
   klassen.print_speler(handen['speler'])
   if volgorde[beurt%len(volgorde)] != 'speler':
     print(volgorde[beurt%len(volgorde)], 'is aan de beurt!')
-    A = computer.CPU_input(handen[volgorde[beurt]],pot)
+    A = computer.CPU_input(handen[volgorde[beurt%len(volgorde)]],pot)
     time.sleep(3)
     if A[0] == 'pakken':
       print(volgorde[beurt], 'heeft een kaart gepakt!')
-    else:
+    elif A[0] == 'spelen':
       print(volgorde[beurt], 'heeft een kaart gespeeld!')
     time.sleep(3)
   else:
