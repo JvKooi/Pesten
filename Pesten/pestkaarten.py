@@ -102,13 +102,18 @@ def kaart_tien(handen,volgorde,beurt):
   #checkt instelling
   if instelling_tien == 'ja':
     a=len(handen[volgorde[beurt]])
+    #voeg elke kaart uit de hand van de volgende speler toe aan de hand van de beurtspeler
     for i in range(len(handen[volgorde[(beurt+1)%len(volgorde)]])):
       handen[volgorde[beurt]].append(handen[volgorde[(beurt+1)%len(volgorde)]][i])
+    #maak de hand van de volgende speler leeg
     handen[volgorde[(beurt+1)%len(volgorde)]].clear()
+    #voeg de 'oude' kaarten uit de hand van de beurtspeler toe aan de hand van de volgende speler
     for i in range(a):
       handen[volgorde[(beurt+1)%len(volgorde)]].append(handen[volgorde[beurt]][i])
+    #verwijder de 'oude' kaarten uit de hand van de beurtspeler
     for i in range(a):
       handen[volgorde[beurt]].remove(handen[volgorde[beurt]][0])
+    #laat de menselijke speler weten wat er precies gebeurt
     print(volgorde[beurt],'heeft handen gewisseld met',volgorde[(beurt+1)%len(volgorde)],'!')
     time.sleep(3)
   return handen
