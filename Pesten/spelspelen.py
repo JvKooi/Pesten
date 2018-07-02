@@ -58,7 +58,7 @@ def ronde_spelen(beurt,deck,gespeeld,pot,handen,volgorde):
   else:
     print('Jij bent aan de beurt!')
     A = speler_input(handen[volgorde[beurt]])
-  speler_kaart =  handen[volgorde[beurt]][A[1]-1]
+  speler_kaart =  handen[volgorde[beurt]][A[1]]
   if A[0] == 'pakken':
     kaart_pakken(handen[volgorde[beurt]],deck)
     beurt = (beurt + 1) % len(volgorde)
@@ -67,7 +67,7 @@ def ronde_spelen(beurt,deck,gespeeld,pot,handen,volgorde):
       ronde_spelen(beurt,deck,gespeeld,pot,handen,volgorde)
       beurt = beurt + 1
     elif controleer_kaart(pot,speler_kaart):
-      gespeeld.append(handen[volgorde[beurt]].pop(A[1]-1))
+      gespeeld.append(handen[volgorde[beurt]].pop(A[1]))
       resultaat = gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart)
       volgorde = resultaat[5]
       beurt = (resultaat[0] + 1) % len(volgorde)
@@ -92,7 +92,7 @@ def speler_input(speler_hand):
     while kaart_keuze > len(speler_hand) or kaart_keuze <= 0:
       print('U heeft',int(len(speler_hand)), 'kaarten')
       kaart_keuze = int(input('Uw keuze is kaartnummer: '))
-  return ([kaart_input,kaart_keuze])
+  return ([kaart_input,kaart_keuze-1])
 
 def gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart):
   if speler_kaart.waarde == '2':
