@@ -40,7 +40,7 @@ def kaart_twee(gespeeld,deck,handen,volgorde,beurt):
     print(volgorde[beurt], 'heeft een twee gespeeld!')
     time.sleep(3)
     if A[-1] == 0:
-      print(volgorde[beurt+1], 'moet twee kaarten pakken')
+      print(volgorde[(beurt+1)%len(volgorde)], 'moet twee kaarten pakken')
       time.sleep(3)
       spelspelen.kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)
       spelspelen.kaart_pakken(handen[volgorde[(beurt+1)%len(volgorde)]],deck)

@@ -108,7 +108,7 @@ def gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart):
   elif speler_kaart.waarde == '10':
     handen = pestkaarten.kaart_tien(handen,volgorde,beurt)
   elif speler_kaart.waarde == 'B':
-    gespeeld = pestkaarten.kaart_boer(gespeeld,volgorde,beurt)
+    gespeeld = pestkaarten.kaart_boer(gespeeld,volgorde,beurt,handen)
   elif speler_kaart.waarde == 'H':
     beurt = pestkaarten.kaart_heer(beurt)
   elif speler_kaart.waarde == 'A':
@@ -123,8 +123,11 @@ def gespeelde_kaart(beurt,deck,gespeeld,pot,handen,volgorde,speler_kaart):
   return ([beurt,deck,gespeeld,pot,handen,volgorde])
 
 def stapels_bijwerken(deck,pot,gespeeld):
-  deck.append(pot[0])
-  pot.clear()
+  if pot[-1].waarde == 'B':
+    pot.clear()
+  else:
+    deck.append(pot[0])
+    pot.clear()
   pot.append(gespeeld[-1])
   gespeeld.remove(gespeeld[-1])
   deck = deck + gespeeld
@@ -132,7 +135,12 @@ def stapels_bijwerken(deck,pot,gespeeld):
   
 # kaart pakken uit het deck
 def kaart_pakken(speler_hand,deck):
-  speler_hand.append(deck.pop(random.choice(range(len(deck)))))
+  if len(deck) == 0:
+    print('Sorry, de kaarten zijn op!')
+    print('Het spel stopt!')
+    exit()
+  else:
+    speler_hand.append(deck.pop(random.choice(range(len(deck)))))
 
 #moet controleren of de opgelegde kaart correct is
 def controleer_kaart(pot,speler_kaart):

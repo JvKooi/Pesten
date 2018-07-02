@@ -45,28 +45,39 @@ def handen_aanmaken(volgorde,deck,instelling_aantal_kaarten):
 
 def instellingen():
     instelling_aantal_spelers = int(input('Met hoeveel spelers wil je spelen? '))
-    instelling_aantal_kaarten = int(input('Met hoeveel kaarten wil je beginnen? '))
-    instelling_speelinstelling = input('Wil je met standaardinstellingen spelen? ')
-    if instelling_speelinstelling == 'ja':
-        instelling_twee = 'ja'
-        instelling_zeven = 'ja'
-        instelling_acht = 'ja'
-        instelling_tien = 'ja'
-        instelling_boer = 'ja'
-        instelling_heer = 'ja'
-        instelling_joker = 'ja'
-        instelling_aas = 'ja'
+    while instelling_aantal_spelers <= 1:
+        print('Sorry, U moet met minimaal 2 spelers beginnen')
+        instelling_aantal_spelers = int(input('Met hoeveel spelers wil je spelen? '))
+    instelling_aantal_kaarten = int(input('met hoeveel kaarten wil je beginnen? '))
+    while instelling_aantal_kaarten <= 0:
+        print('Sorry, U moet met minimaal 1 kaart beginnen')
+        instelling_aantal_kaarten = int(input('met hoeveel kaarten wil je beginnen? '))
+    while instelling_aantal_spelers*instelling_aantal_kaarten >= 54:
+        print('Sorry, er zijn niet genoeg kaarten om het spel te beginnen. Probeer opnieuw!')
+        instelling_aantal_spelers = int(input('Met hoeveel spelers wil je spelen? '))
+        instelling_aantal_kaarten = int(input('met hoeveel kaarten wil je beginnen? '))
     else:
-        print('Selecteer ja/nee voor het gebruik van een pestkaart')
-        instelling_twee = input('Bij twee: twee pakken ')
-        instelling_zeven = input('Bij zeven: nog een keer spelen ')
-        instelling_acht = input('Bij acht: volgende speler overslaan ')
-        instelling_tien = input('Bij tien: opnieuw delen ')
-        instelling_boer = input('Bij boer: symbool kiezen ')
-        instelling_heer = input('Bij heer: nog een keer spelen ')
-        instelling_joker = input('Bij joker: vijf kaarten pakken ')
-        instelling_aas = input('Bij aas: volgorde omdraaien ')
-    return [instelling_aantal_spelers,instelling_aantal_kaarten,instelling_twee,instelling_zeven,instelling_acht,instelling_tien,instelling_boer,instelling_heer,instelling_joker,instelling_aas]
+        instelling_speelinstelling = input('Wil je met standaardinstellingen spelen? ')
+        if instelling_speelinstelling == 'ja':
+            instelling_twee = 'ja'
+            instelling_zeven = 'ja'
+            instelling_acht = 'ja'
+            instelling_tien = 'ja'
+            instelling_boer = 'ja'
+            instelling_heer = 'ja'
+            instelling_joker = 'ja'
+            instelling_aas = 'ja'
+        else:
+            print('Selecteer ja/nee voor het gebruik van een pestkaart')
+            instelling_twee = input('Bij twee: twee pakken ')
+            instelling_zeven = input('Bij zeven: nog een keer spelen ')
+            instelling_acht = input('Bij acht: volgende speler overslaan ')
+            instelling_tien = input('Bij tien: opnieuw delen ')
+            instelling_boer = input('Bij boer: symbool kiezen ')
+            instelling_heer = input('Bij heer: nog een keer spelen ')
+            instelling_joker = input('Bij joker: vijf kaarten pakken ')
+            instelling_aas = input('Bij aas: volgorde omdraaien ')
+        return [instelling_aantal_spelers,instelling_aantal_kaarten,instelling_twee,instelling_zeven,instelling_acht,instelling_tien,instelling_boer,instelling_heer,instelling_joker,instelling_aas]
 
 instel = instellingen()
 instelling_aantal_spelers=instel[0]

@@ -5,60 +5,6 @@ class kaart:
         self.symbool = symbool
         self.waarde = waarde
 
-  # bron: https://codereview.stackexchange.com/questions/82103/ascii-fication-of-playing-cards 
-    def __repr__(self,return_string=True):
-        if self.symbool in suits:
-            lines = [[] for i in range(9)]
-            if self.waarde == '10':
-                rank = self.waarde
-                space = ''
-            else:
-                rank = self.waarde
-                space = ' '
-
-            a = suits[self.symbool]
-
-            lines[0].append('┌─────────┐')
-            lines[1].append('│{}{}       │'.format(rank, space))
-            lines[2].append('│         │')
-            lines[3].append('│         │')
-            lines[4].append('│    {}    │'.format(a))
-            lines[5].append('│         │')
-            lines[6].append('│         │')
-            lines[7].append('│       {}{}│'.format(space, rank))
-            lines[8].append('└─────────┘')
-
-            result = []
-            for index, line in enumerate(lines):
-                result.append(''.join(lines[index]))
-
-            if return_string:
-                return '\n'.join(result)
-            else:
-                return result
-    
-        else:
-            lines = [[] for i in range(9)]
-
-            lines[0].append('┌─────────┐')
-            lines[1].append('│░░░░░░░░░│')
-            lines[2].append('│░░░░░░░░░│')
-            lines[3].append('│░░░░░░░░░│')
-            lines[4].append('│░░░░░░░░░│')
-            lines[5].append('│░░░░░░░░░│')
-            lines[6].append('│░░░░░░░░░│')
-            lines[7].append('│░░░░░░░░░│')
-            lines[8].append('└─────────┘')
-
-            result = []
-            for index, line in enumerate(lines):
-                result.append(''.join(lines[index]))
-      
-            if return_string:
-                return '\n'.join(result)
-            else:
-                return result
-
 class hand(list):
 
   # bron: https://codereview.stackexchange.com/questions/82103/ascii-fication-of-playing-cards 
@@ -110,44 +56,17 @@ def print_speler(speler_hand):
   if len(speler_hand)<=8:
     print(speler_hand)
   else:
-    intervallen = [hand(),hand(),hand(),hand(),hand()]
-    if len(speler_hand) > 8 and len(speler_hand) <= 16:
-      for i in range(8):
-        intervallen[0].append(speler_hand[i])
-      for i in range(8,len(speler_hand)):
-        intervallen[1].append(speler_hand[i])
-    elif len(speler_hand) > 16 and len(speler_hand) <= 24:
-      for i in range(8):
-        intervallen[0].append(speler_hand[i])
-      for i in range(8,16):
-        intervallen[1].append(speler_hand[i])
-      for i in range(16,len(speler_hand)):
-        intervallen[2].append(speler_hand[i])
-    elif len(speler_hand) > 24 and len(speler_hand) <= 32:
-      for i in range(8):
-        intervallen[0].append(speler_hand[i])
-      for i in range(8,16):
-        intervallen[1].append(speler_hand[i])
-      for i in range(16,24):
-        intervallen[2].append(speler_hand[i])
-      for i in range(24,len(speler_hand)):
-        intervallen[3].append(speler_hand[i])
-    elif len(speler_hand) > 32 and len(speler_hand) <= 40:
-      for i in range(8):
-        intervallen[0].append(speler_hand[i])
-      for i in range(8,16):
-        intervallen[1].append(speler_hand[i])
-      for i in range(16,24):
-        intervallen[2].append(speler_hand[i])
-      for i in range(24,32):
-        intervallen[3].append(speler_hand[i])
-      for i in range(32,len(speler_hand)):
-        intervallen[4].append(speler_hand[i])
-    print(intervallen[0])
-    print(intervallen[1])
-    if len(intervallen[2])>0:
-      print(intervallen[2])  
-    if len(intervallen[3])>0:
-      print(intervallen[3]) 
-    if len(intervallen[4])>0:
-      print(intervallen[4])
+    A = []
+    B = []
+    for i in range(len(speler_hand)//8+1):
+      A.append(hand())
+      B.append((i+1)*8)
+    j = 0
+    n = 0
+    while n != len(A):
+      while j != B[n] and j < len(speler_hand):
+        A[n].append(speler_hand[j])
+        j = j + 1
+      n = n + 1
+    for k in range(len(A)):
+      print(A[k])
